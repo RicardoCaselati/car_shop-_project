@@ -3,6 +3,8 @@ import {
   models,
   Schema,
   model,
+  isValidObjectId,
+  UpdateQuery,
 } from 'mongoose';
 
 abstract class AbstractODM<T> {
@@ -26,6 +28,22 @@ abstract class AbstractODM<T> {
 
   public async findById(id: string): Promise<T> {
     return this.model.findOne({ _id: id }).select({ __v: 0 }).lean();
+  }
+
+  public async update(_id: string, obj: Partial<T>): Promise<T | null> {
+    if (!isValidObjectId(_id)) throw Error('Invalid Mongo id');
+
+    return this.model.findByIdAndUpdate(
+      { _id },
+      { ...obj } as UpdateQuery<T>,
+      { new: true },
+    );
+  }
+
+  public async delete(id: string): Promise<T | null> {
+    if (!isValidObjectId(id)) throw Error('Invalid Mongo id');
+
+    return this.model.findByIdAndDelete({ _id: id });
   }
 }
 

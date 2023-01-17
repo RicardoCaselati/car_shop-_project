@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 import ICar from '../Interfaces/ICar';
 import CarService from '../Services/CarService';
 
-class CarController {
+class MotorcyclesController {
   private req: Request;
   private res: Response;
   private next: NextFunction;
@@ -107,4 +107,4 @@ class CarController {
   }
 }
 
-export default CarController;
+export default MotorcyclesController;
