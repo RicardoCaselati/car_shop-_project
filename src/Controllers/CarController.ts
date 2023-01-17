@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { Types } from 'mongoose';
 import ICar from '../Interfaces/ICar';
 import CarService from '../Services/CarService';
 
@@ -29,6 +30,29 @@ class CarController {
     try {
       const newCar = await this.service.create(car);
       return this.res.status(201).json(newCar);
+    } catch (error) {
+      this.next(error);
+    }
+  }
+
+  public async getAll() {
+    const cars = await this.service.getAll();
+    return this.res.status(200).json(cars);
+  }
+
+  public async getById() {
+    try {
+      const { id } = this.req.params;
+      if (!Types.ObjectId.isValid(id)) {
+        return this.res.status(422).json({ message: 'Invalid mongo id' });
+      }
+      const foundCar = await this.service.getById(id);
+
+      if (!foundCar) {
+        return this.res.status(404).json({ message: 'Car not found' });
+      }
+
+      return this.res.status(200).json({ ...foundCar, id });
     } catch (error) {
       this.next(error);
     }
